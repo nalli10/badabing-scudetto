@@ -1012,7 +1012,7 @@ table.prize-tbl .prize-empty { color:#999; font-style:italic; }
   <div class="hdr">
     <h1>Badabing Scudetto</h1>
     <div class="sub">Season 2025-26</div>
-    <div class="freshness">Updated 2026-05-24 22:13</div>
+    <div class="freshness">Updated 2026-05-24 23:48</div>
   </div>
 
   <div class="tab-nav">
@@ -1061,7 +1061,7 @@ table.prize-tbl .prize-empty { color:#999; font-style:italic; }
 </tr>
 <tr class="rank-3">
 <td class="rank">3</td>
-<td>SS Kenny Satch <span class="adj-badge neg" title="Bonus 0 − Penalty 1">-1</span></td>
+<td>SS Kenny Satch <span class="adj-badge neg" title="Site penalty: -1">-1</span></td>
 <td class="num">35</td>
 <td class="num">16</td>
 <td class="num">5</td>
@@ -1097,7 +1097,7 @@ table.prize-tbl .prize-empty { color:#999; font-style:italic; }
 </tr>
 <tr class="">
 <td class="rank">6</td>
-<td>Bianconeri Bananas <span class="adj-badge neg" title="Bonus 0 − Penalty 4">-4</span></td>
+<td>Bianconeri Bananas <span class="adj-badge neg" title="Site penalty: -4 · -2 (4th missed lineup (rule 6.1: 4th game = -2 pts))">-6</span></td>
 <td class="num">35</td>
 <td class="num">15</td>
 <td class="num">3</td>
@@ -1105,7 +1105,7 @@ table.prize-tbl .prize-empty { color:#999; font-style:italic; }
 <td class="num">71</td>
 <td class="num">86</td>
 <td class="num">2398.5</td>
-<td class="num"><b>44</b></td>
+<td class="num"><b>42</b></td>
 </tr>
 <tr class="">
 <td class="rank">7</td>
@@ -1659,8 +1659,8 @@ table.prize-tbl .prize-empty { color:#999; font-style:italic; }
 
 </section>
 
-<section>
-  <h2>📊 Player Leaders</h2>
+<section id="player-leaders-section" style="display:none">
+  <h2>📊 Player Leaders <span style="font-size:11px;color:#999;font-weight:400">(unlocked)</span></h2>
   <p style="color:#666;font-size:12px;margin:-8px 0 12px 0">
     Top 10 per category across the whole Scudetto season. Click any row to expand.
   </p>
@@ -1917,6 +1917,45 @@ table.prize-tbl .prize-empty { color:#999; font-style:italic; }
       window.scrollTo({ top: 0, behavior: 'instant' });
     });
   });
+
+  // ---- Easter egg: 5 clicks on the page title within 3s unlocks the
+  // ---- Player Leaders section (persisted in localStorage). Visible
+  // ---- only to people who know the trick.
+  var unlockKey = 'fanta_player_leaders_unlocked';
+  var pls = document.getElementById('player-leaders-section');
+  function reveal() {
+    if (pls) pls.style.display = '';
+  }
+  if (pls && localStorage.getItem(unlockKey) === '1') {
+    reveal();
+  }
+  var titleEl = document.querySelector('.hdr h1');
+  if (titleEl && pls) {
+    var clicks = 0;
+    var resetT = null;
+    titleEl.style.cursor = 'default';   // no visual hint
+    titleEl.addEventListener('click', function() {
+      clicks++;
+      if (resetT) clearTimeout(resetT);
+      resetT = setTimeout(function() { clicks = 0; }, 3000);
+      if (clicks >= 5) {
+        clicks = 0;
+        if (resetT) clearTimeout(resetT);
+        localStorage.setItem(unlockKey, '1');
+        reveal();
+        // Brief toast so they know it worked.
+        var toast = document.createElement('div');
+        toast.textContent = '🔓 Player Leaders unlocked';
+        toast.style.cssText = 'position:fixed;bottom:20px;left:50%;'
+          + 'transform:translateX(-50%);background:#1a3a5c;color:white;'
+          + 'padding:10px 20px;border-radius:8px;font-size:14px;'
+          + 'font-weight:600;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,0.2);';
+        document.body.appendChild(toast);
+        setTimeout(function() { toast.remove(); }, 2500);
+        pls.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  }
 })();
 </script>
 <script>
